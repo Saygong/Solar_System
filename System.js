@@ -2,48 +2,77 @@
 
 window.onload = function() {
 
-    let scene = new THREE.Scene();
-    let cam = new THREE.PerspectiveCamera(fov = 75, aspect = window.innerWidth/window.innerHeight,near = 0.1, far = 1000);
-    cam.position.z = 5;
 
+    //Creating scene, camera & light
+
+    let scene = new THREE.Scene();
+
+    let cam = new THREE.PerspectiveCamera(fov = 75, aspect = window.innerWidth/window.innerHeight,near = 0.1, far = 1000);
+    cam.position.z = 10;
+
+
+    const central_light = new THREE.PointLight( 0xffffff, 1, 2000 );
+    central_light.position.set(0 , 0, 3 );
+    scene.add( central_light );
+
+
+    //Creating a renderer & appending it to the body
     let renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( renderer.domElement );
 
 
+    //Common stuff
     let sphere = new THREE.SphereGeometry(1);
+
+    //First planet - sun
     let material = new THREE.MeshLambertMaterial( {
-        map: THREE.ImageUtils.loadTexture('texture_path' )
+        map: THREE.ImageUtils.loadTexture('textures/sun.jpg' )
     });
-    material = new THREE.MeshDistanceMaterial( {color: 0xff0000} );
+    let sun = new THREE.Mesh(sphere, material);
+    scene.add( sun );
+    sun.matrixAutoUpdate = false;
+
+    //Second planet - earth
+    let material2 = new THREE.MeshLambertMaterial( {
+        map: THREE.ImageUtils.loadTexture('textures/earth.jpg' )
+    });
+    let earth = new THREE.Mesh(sphere, material2);
+    earth.matrixAutoUpdate = false;
+    sun.add(earth);
 
 
-    let planet = new THREE.Mesh(sphere, material);
-    scene.add( planet );
-    planet.matrixAutoUpdate = false;
+    //Third planet - moon
+    let mini_sphere = new THREE.SphereGeometry(0.4);
+    let material3 = new THREE.MeshLambertMaterial( {
+        map: THREE.ImageUtils.loadTexture('textures/moon.jpg' )
+    });
+    let moon = new THREE.Mesh(mini_sphere, material3);
+    moon.matrixAutoUpdate = false;
+    earth.add(moon);
 
-
-    //Fonte luminosa
-    let innerLight = new THREE.PointLight(0xffffff, 0.8,100)
-    innerLight.position.set(50, 50, 50).normalize();
-    scene.add(innerLight)
-
-
-    //Rotazione & Posizione
-    //mesh.position.z  = -2;
-    //mesh.rotation.y = 3.14/4.0;
 
 
 
 
     let render = function() {
         let now = new Date();
-        // lo si mette con un or logico in modo da coprire il caso in cui render.time sia undefined
         let dt = now-(render.time || now);
+        render.time = now;
 
-        let rot = new THREE.Matrix4().makeRotationY(0.01 * dt);
-        planet.matrix.multiply(rot);
 
+
+        let rot = new THREE.Matrix4().makeRotationY(0.0001*dt);
+        sun.matrix.multiply(rot);
+
+        let rot_earth = new THREE.Matrix4().makeRotationY(0.001*dt);
+        let tras_earth = new THREE.Matrix4().makeTranslation(5,0,0);
+        earth.matrix = tras_earth.multiply(rot_earth);
+
+
+        let rot_moon = new THREE.Matrix4().makeRotationY(0.001*now);
+        let trans_moon = new THREE.Matrix4().makeTranslation(1.5,0,0);
+        moon.matrix = rot_moon.multiply(trans_moon);
 
 
 
