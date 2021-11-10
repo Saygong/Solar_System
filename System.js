@@ -23,17 +23,19 @@ window.onload = function() {
 
 
     //Common stuff
-    let sphere = new THREE.SphereGeometry(1);
+    //let sphere = new THREE.SphereGeometry(1);
 
     //First planet - sun
+    let mega_sphere = new THREE.SphereGeometry(2);
     let material = new THREE.MeshLambertMaterial( {
         map: THREE.ImageUtils.loadTexture('textures/sun.jpg' )
     });
-    let sun = new THREE.Mesh(sphere, material);
+    let sun = new THREE.Mesh(mega_sphere, material);
     scene.add( sun );
     sun.matrixAutoUpdate = false;
 
     //Second planet - earth
+    let sphere = new THREE.SphereGeometry(1);
     let material2 = new THREE.MeshLambertMaterial( {
         map: THREE.ImageUtils.loadTexture('textures/earth.jpg' )
     });
@@ -50,6 +52,16 @@ window.onload = function() {
     let moon = new THREE.Mesh(mini_sphere, material3);
     moon.matrixAutoUpdate = false;
     earth.add(moon);
+
+//Fourth planet - jupiter
+    let medium_sphere = new THREE.SphereGeometry(1.5);
+    let material4 = new THREE.MeshLambertMaterial( {
+        map: THREE.ImageUtils.loadTexture('textures/jupiter.jpg' )
+    });
+    let jup = new THREE.Mesh(medium_sphere, material4);
+    jup.matrixAutoUpdate = false;
+    sun.add(jup);
+
 
 
 
@@ -73,6 +85,11 @@ window.onload = function() {
         let rot_moon = new THREE.Matrix4().makeRotationY(0.001*now);
         let trans_moon = new THREE.Matrix4().makeTranslation(1.5,0,0);
         moon.matrix = rot_moon.multiply(trans_moon);
+
+
+        let rot_jup = new THREE.Matrix4().makeRotationY(0.001*now);
+        let trans_jup = new THREE.Matrix4().makeTranslation(9,0,0);
+        jup.matrix = trans_jup.multiply(rot_jup);
 
 
 
